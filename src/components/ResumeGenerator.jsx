@@ -1,11 +1,17 @@
 // Parent Component
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ResumeGenerator() {
 
     const [userDetails, setUserDetails] = useState({ firstName: "", lastName: "", university: "", company: "" })
     const [submitted, setSubmitted] = useState(false);
+
+    useEffect(() => {
+        if (userDetails.firstName != "") {
+            document.title = `${userDetails.firstName} ${userDetails.lastName}'s Resume`
+        }
+    }, [userDetails.firstName, userDetails.lastName])
 
     const firstNameChange = (evt) => {
         setUserDetails({ ...userDetails, firstName: evt.target.value })
@@ -38,6 +44,7 @@ export default function ResumeGenerator() {
                 <ResumeQuery userObject={userDetails} firstName={firstNameChange} lastName={lastNameChange} university={universityChange} company={companyChange} submitted={submitted} handleSubmit={handleSubmit} />
             </div>
             <div className="basis-3/4 grow bg-white flex flex-col items-center justify-center">
+
                 {submitted ? <ResumePreview userDetails={userDetails} submitted={submitted} /> : <DefaultPreview />}
 
             </div>
@@ -62,21 +69,25 @@ function ResumeQuery({ userObject, firstName, lastName, university, company, sub
             <div className="flex flex-row justify-around">
                 <button className="border-zinc-700" onClick={handleSubmit}>Submit</button>
                 {submitted ? <button onClick={handleSubmit}>Reset</button> : <button disabled className="disabled: line-through" onClick={handleSubmit}>Reset</button>}
-                
-                
-                {/* <button onClick={handleSubmit}>Reset</button> */}
             </div>
         </form>
     )
 }
 
 function ResumePreview({ userDetails, submitted }) {
+
     let fullName = `${userDetails.firstName} ${userDetails.lastName}`
     return (
         <>
             <h1 className="text-4xl mb-5">A resume for {fullName}.</h1>
             <h2>{fullName} graduated from {userDetails.university}.</h2>
         </>
+    )
+}
+
+function LoadingScreen() {
+    return (
+        <h1>Loading ... </h1>
     )
 }
 
